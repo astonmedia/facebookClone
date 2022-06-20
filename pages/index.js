@@ -4,12 +4,13 @@ import Header from "../components/Header"
 import Login from "../components/Login"
 import { useSession } from "next-auth/react"
 import Sidebar from "../components/Sidebar"
+import Feed from "../components/Feed"
 
 export default function Home(props) {
   const { data: session, status } = useSession()
   if (!session) return <Login />
   return (
-    <div>
+    <div className='bg-gray-100'>
       <Head>
         <title>Facebook</title>
       </Head>
@@ -20,6 +21,7 @@ export default function Home(props) {
         {/* Sidebar */}
         <Sidebar />
         {/* Feed */}
+        <Feed />
         {/* Widgets */}
       </main>
     </div>
