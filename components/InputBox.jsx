@@ -2,11 +2,31 @@ import Image from "next/image"
 import { useSession } from "next-auth/react"
 import { EmojiHappyIcon } from "@heroicons/react/outline"
 import { CameraIcon, VideoCameraIcon } from "@heroicons/react/solid"
+import { useRef } from "react"
+import { supabase } from "../utils/supabaseClient"
 
 const InputBox = () => {
   const { data: session, status } = useSession()
-  const sendPost = (e) => {
+  const inputRef = useRef(null)
+
+  const sendPost = async (e) => {
     e.preventDefault()
+
+    if (!inputRef.current.value) return
+
+    await supabase
+      .from("posts")
+      .insert([
+        {
+          message: inputRef.current.value,
+          name: session.user.name,
+          email: session.user.email,
+          image: session.user.image,
+        },
+      ])
+      .single()
+
+    inputRef.current.value = ""
   }
   return (
     <div className='bg-white p-2 shadow-md text-gray-500 font-medium mt-6 rounded-2xl'>
@@ -21,6 +41,7 @@ const InputBox = () => {
         />
         <form className='flex flex-1'>
           <input
+            ref={inputRef}
             type='text'
             className='rounded-full h-12 bg-gray-100 flex-grow px-5 focus:outline-non'
             placeholder={`What's on your mind, ${session.user.name}`}
